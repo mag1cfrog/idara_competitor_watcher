@@ -10,6 +10,8 @@ dependencies = [
     "polars",
     "duckdb",
     "pyarrow",
+    "loguru>=0.7.2",
+    "python-amazon-sp-api @ git+https://github.com/mag1cfrog/python-amazon-sp-api.git@master",
 ]
 requires-python = ">=3.12"
 readme = "README.md"

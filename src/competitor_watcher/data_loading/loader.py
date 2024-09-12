@@ -108,6 +108,8 @@ def data_loader():
     
     print("Data loaded successfully")
 
+    return timestamp
+
 
 if __name__ == "__main__":
 	data_loader()
