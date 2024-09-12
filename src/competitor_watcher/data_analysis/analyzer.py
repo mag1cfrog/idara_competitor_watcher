@@ -12,7 +12,7 @@ def analyze():
 
     asin_list = config["competitor_asin_list"]
 
-    droped_messages = []
+    dropped_messages = []
 
     with duckdb.connect() as conn:
         conn = attach_db(conn)
@@ -20,9 +20,10 @@ def analyze():
             sql_query_analysis = f"""
             WITH ranked_over_time AS (SELECT 
                 ASIN, 
+                CompetitivePrices_subcondition,
                 CompetitivePrices_Price_LandedPrice_Amount,
                 Timestamp,
-                ROW_NUMBER() OVER (PARTITION BY ASIN ORDER BY Timestamp DESC) AS rn
+                ROW_NUMBER() OVER (PARTITION BY ASIN, CompetitivePrices_subcondition ORDER BY Timestamp DESC) AS rn
             FROM db.item_pricing
             WHERE ASIN = '{asin}')
             SELECT *
@@ -32,25 +33,32 @@ def analyze():
             """
             results = conn.execute(sql_query_analysis).fetchall()
 
-            if len(results) > 1:
-                # Compare the last and the second last records
-                latest_price = results[0][1]  # Assuming the second column is 'CompetitivePrices_Price_LandedPrice_Amount'
-                second_latest_price = results[1][1]
-                if latest_price < second_latest_price:
-                    logger.info(f"Price dropped for ASIN {asin}: from {second_latest_price:.2f} to {latest_price:.2f}")
-                    droped_messages.append(f"Price dropped for ASIN {asin}: from {second_latest_price:.2f} to {latest_price:.2f}")
+            prices = {}
 
-                else:
-                    logger.info(f"No price drop for ASIN {asin}: remains at {latest_price:.2f}")
-                    
-            elif len(results) == 1:
-                logger.info(f"Only one record found for ASIN {asin}")
-            else:
-                logger.info(f"No records found for ASIN {asin}")
+            for result in results:
+                asin, condition, price, _, rn = result
+                if (asin, condition) not in prices:
+                    prices[(asin, condition)] = [None, None]  # [latest_price, second_latest_price]
+                if rn == 1:
+                    prices[(asin, condition)][0] = price
+                elif rn == 2:
+                    prices[(asin, condition)][1] = price
 
-    if droped_messages:
+            # Now check for price drops
+            for (asin, condition), (latest_price, second_latest_price) in prices.items():
+                if None not in (latest_price, second_latest_price):  # Ensure both prices are available
+                    if latest_price < second_latest_price:
+                        message = f"Price dropped for ASIN {asin} with condition '{condition}': from {second_latest_price:.2f} to {latest_price:.2f}"
+                        logger.info(message)
+                        dropped_messages.append(message)
+                    else:
+                        logger.info(f"No price drop for ASIN {asin} with condition '{condition}': remains at {latest_price:.2f}")
+                elif latest_price is not None:
+                    logger.info(f"Only one record found for ASIN {asin} with condition '{condition}'")
+
+    if dropped_messages:
         subject = "Price Drop Alert"
-        body = "\n".join(droped_messages)
+        body = "\n".join(dropped_messages)
         to_addr = config["notification_email"]
         from_addr = config["email_sender"]
         send_email(subject, body, to_addr, from_addr)
