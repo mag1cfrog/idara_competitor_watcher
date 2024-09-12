@@ -68,7 +68,7 @@ def main():
             lwa_app_id=os.getenv('sp_api_lwa_app_id'),
             lwa_client_secret=os.getenv('sp_api_lwa_client_secret'),
         )
-    
+
     with open("config.json") as f:
         config = json.load(f)
 

@@ -1,9 +1,12 @@
 import os
 import duckdb
 from loguru import logger
+from dotenv import load_dotenv
 
 
 def attach_db(conn: duckdb.DuckDBPyConnection) -> duckdb.DuckDBPyConnection:
+    load_dotenv()
+
     sql_query_attach_db = f"""
     LOAD postgres;
 
@@ -19,7 +22,7 @@ def attach_db(conn: duckdb.DuckDBPyConnection) -> duckdb.DuckDBPyConnection:
     ATTACH '' AS db (TYPE POSTGRES, SECRET postgres_secret_one);
 
     """
-    logger.info("Executing SQL query in DuckDB")
+    logger.info("Attaching Postgres database to DuckDB")
     
     conn.execute(sql_query_attach_db)
     
