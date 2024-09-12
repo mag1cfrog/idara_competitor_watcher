@@ -127,3 +127,5 @@ log/
 
 # Notebook folder
 notebook/
+
+.pdm-python
