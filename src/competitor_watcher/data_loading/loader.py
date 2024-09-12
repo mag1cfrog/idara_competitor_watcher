@@ -2,30 +2,13 @@ import os
 from datetime import datetime
 import duckdb
 import polars as pl
+from loguru import logger
 from dotenv import load_dotenv
 from competitor_watcher.data_loading.retrieve_competitor_info import main as retrieve_competitor_info
 from competitor_watcher.data_loading.transform_raw_data import unnest_and_explode, transform_pl_df_and_generate_schema
+from competitor_watcher.utils.db_management import attach_db
 
 
-def attach_db(conn: duckdb.DuckDBPyConnection) -> None:
-    sql_query_attach_db = f"""
-    LOAD postgres;
-
-    CREATE SECRET postgres_secret_one (
-        TYPE POSTGRES,
-        HOST '{os.getenv('POSTGRES_HOST')}',
-        PORT 5432,
-        DATABASE {os.getenv('POSTGRES_DBNAME')},
-        USER 'postgres',
-        PASSWORD '{os.getenv('POSTGRES_PASSWORD')}'
-    );
-
-    ATTACH '' AS db (TYPE POSTGRES, SECRET postgres_secret_one);
-
-    """
-    print("Executing SQL query in DuckDB")
-    
-    conn.execute(sql_query_attach_db)
 
 
 def load_attribute_data(conn: duckdb.DuckDBPyConnection, item_attribute_df_2: pl.DataFrame, item_attribute_schema: str) -> None:
@@ -70,7 +53,7 @@ def load_pricing_data(conn: duckdb.DuckDBPyConnection, item_pricing_df_2: pl.Dat
         FROM db.item_pricing i
         WHERE i.ASIN = t.ASIN
         AND i.Timestamp = t.Timestamp
-        AND i.CompetitivePricing_CompetitivePrices_condition = t.CompetitivePricing_CompetitivePrices_condition
+        AND i.CompetitivePrices_condition = t.CompetitivePrices_condition
     );
     """
 
@@ -93,7 +76,7 @@ def data_loader():
             )
 
     item_pricing_df = unnest_and_explode(
-          pl.DataFrame(competitor_item_pricing).unnest('Product')
+          pl.DataFrame(competitor_item_pricing).unnest('Product').unnest('CompetitivePricing')
         ).with_columns(
               pl.lit(timestamp).str.to_datetime().alias('Timestamp')
             )
@@ -101,7 +84,7 @@ def data_loader():
     item_pricing_df_2, item_pricing_schema = transform_pl_df_and_generate_schema(item_pricing_df)
 
     with duckdb.connect() as conn:
-        attach_db(conn)
+        conn = attach_db(conn)
 
         load_attribute_data(conn, item_attribute_df_2, item_attribute_schema)
         load_pricing_data(conn, item_pricing_df_2, item_pricing_schema)
