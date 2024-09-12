@@ -8,6 +8,7 @@ def attach_db(conn: duckdb.DuckDBPyConnection) -> duckdb.DuckDBPyConnection:
     load_dotenv()
 
     sql_query_attach_db = f"""
+    INSTALL postgres;
     LOAD postgres;
 
     CREATE SECRET postgres_secret_one (
