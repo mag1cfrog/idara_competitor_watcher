@@ -2,6 +2,7 @@ import json
 import duckdb
 from loguru import logger
 from competitor_watcher.utils.db_management import attach_db
+from competitor_watcher.utils.email_sender import send_email
 
 
 def analyze():
@@ -11,7 +12,7 @@ def analyze():
 
     asin_list = config["competitor_asin_list"]
 
-    print(asin_list)
+    droped_messages = []
 
     with duckdb.connect() as conn:
         conn = attach_db(conn)
@@ -37,14 +38,23 @@ def analyze():
                 second_latest_price = results[1][1]
                 if latest_price < second_latest_price:
                     logger.info(f"Price dropped for ASIN {asin}: from {second_latest_price:.2f} to {latest_price:.2f}")
+                    droped_messages.append(f"Price dropped for ASIN {asin}: from {second_latest_price:.2f} to {latest_price:.2f}")
+
                 else:
                     logger.info(f"No price drop for ASIN {asin}: remains at {latest_price:.2f}")
+                    
             elif len(results) == 1:
                 logger.info(f"Only one record found for ASIN {asin}")
             else:
                 logger.info(f"No records found for ASIN {asin}")
 
-
+    if droped_messages:
+        subject = "Price Drop Alert"
+        body = "\n".join(droped_messages)
+        to_addr = config["notification_email"]
+        from_addr = config["email_sender"]
+        send_email(subject, body, to_addr, from_addr)
+        logger.info("Email sent successfully!")
 
 if __name__ == "__main__":
     analyze()

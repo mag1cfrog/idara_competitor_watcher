@@ -1,8 +1,12 @@
-import time
 from competitor_watcher.data_loading import data_loader
+from competitor_watcher.data_analysis import analyze
 
-for i in range(10):
+
+def main():
     data_loader()
-    time.sleep(120)
+    analyze()
 
+
+if __name__ == "__main__":
+    main()
 
