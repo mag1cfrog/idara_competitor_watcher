@@ -17,8 +17,32 @@ def analyze():
         conn = attach_db(conn)
         for asin in asin_list:
             sql_query_analysis = f"""
-
+            WITH ranked_over_time AS (SELECT 
+                ASIN, 
+                CompetitivePrices_Price_LandedPrice_Amount,
+                Timestamp,
+                ROW_NUMBER() OVER (PARTITION BY ASIN ORDER BY Timestamp DESC) AS rn
+            FROM db.item_pricing
+            WHERE ASIN = '{asin}')
+            SELECT *
+            FROM ranked_over_time
+            WHERE rn <= 2
+            ORDER BY ASIN, Timestamp DESC;
             """
+            results = conn.execute(sql_query_analysis).fetchall()
+
+            if len(results) > 1:
+                # Compare the last and the second last records
+                latest_price = results[0][1]  # Assuming the second column is 'CompetitivePrices_Price_LandedPrice_Amount'
+                second_latest_price = results[1][1]
+                if latest_price < second_latest_price:
+                    logger.info(f"Price dropped for ASIN {asin}: from {second_latest_price:.2f} to {latest_price:.2f}")
+                else:
+                    logger.info(f"No price drop for ASIN {asin}: remains at {latest_price:.2f}")
+            elif len(results) == 1:
+                logger.info(f"Only one record found for ASIN {asin}")
+            else:
+                logger.info(f"No records found for ASIN {asin}")
 
 
 

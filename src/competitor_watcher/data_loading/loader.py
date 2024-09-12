@@ -68,7 +68,7 @@ def data_loader():
     la_timezone = pytz.timezone('America/Los_Angeles')
 
     # Get the current time in UTC and convert it to Los Angeles time
-    timestamp = datetime.now(pytz.utc).astimezone(la_timezone).strftime("%Y-%m-%d %H:%M:%S")
+    timestamp = datetime.now(pytz.utc).astimezone(la_timezone).isoformat()
 
     competitor_item_attribute, competitor_item_pricing = retrieve_competitor_info()
     item_attribute_df = unnest_and_explode(

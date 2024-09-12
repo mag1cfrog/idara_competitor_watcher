@@ -32,7 +32,7 @@ def generate_schema_from_pl(polars_df: pl.DataFrame, list_struct_cols: list) -> 
         elif polars_df[col].dtype == pl.Int64:
             schema += f"{col}  INT,\n"
         elif polars_df[col].dtype == pl.Datetime:
-            schema += f"{col}  TIMESTAMP,\n"
+            schema += f"{col}  TIMESTAMP WITH TIME ZONE,\n"
         elif polars_df[col].dtype == pl.Boolean:
             schema += f"{col}  BOOLEAN,\n"
         elif polars_df[col].dtype == pl.List(pl.Utf8):
