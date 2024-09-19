@@ -57,7 +57,7 @@ def get_competitor_item_pricing(asin_list: list, product_client: object):
     return response()
 
 
-def main():
+def retrieve_competitor_info():
     timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
     logger.add(f"log/file_{timestamp}.log", rotation="10 MB")
 
@@ -91,6 +91,4 @@ def main():
     return competitor_item_attribute, competitor_item_pricing
 
 
-if __name__ == "__main__":
-    main()
     
