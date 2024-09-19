@@ -10,7 +10,7 @@ from competitor_watcher.utils.config_loader import load_config
 
 
 def get_competitor_info(asin_list: list, credentials: dict):
-    logger.info("Retrieving competitor information")
+    logger.trace("Retrieving competitor information")
     os.environ['ENV_DISABLE_DONATION_MSG'] = '1'
 
     catalog_client = Catalog(
@@ -30,7 +30,7 @@ def get_competitor_info(asin_list: list, credentials: dict):
     except Exception as e:
         logger.error(f"Error: {e}")
     else:
-        logger.info("Competitor information retrieved")
+        logger.trace("Competitor information retrieved")
 
     return competitor_item_attribute, competitor_item_pricing
     
@@ -62,12 +62,12 @@ def main():
     logger.add(f"log/file_{timestamp}.log", rotation="10 MB")
 
     # Print out current directory
-    logger.info(f"Current directory: {os.getcwd()}")
+    logger.debug(f"Current directory: {os.getcwd()}")
     try:
         dotenv_path = os.path.join(os.getcwd(), '.env')
-        logger.info(f"Starting to load env virable from .env file: { dotenv_path }")
+        logger.debug(f"Starting to load env virable from .env file: { dotenv_path }")
         load_dotenv(dotenv_path)
-        logger.info("Env virable loaded successfully")
+        logger.trace("Env virable loaded successfully")
     except Exception as e:
         logger.error(f"Error loading env virable from .env file: {e}")
 

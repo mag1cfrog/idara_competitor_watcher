@@ -50,10 +50,10 @@ def analyze():
                 if None not in (latest_price, second_latest_price):  # Ensure both prices are available
                     if latest_price < second_latest_price:
                         message = f"Price dropped for ASIN {asin} with condition '{condition}': from {second_latest_price:.2f} to {latest_price:.2f}"
-                        logger.info(message)
+                        logger.success(message)
                         dropped_messages.append(message)
                     else:
-                        logger.info(f"No price drop for ASIN {asin} with condition '{condition}': remains at {latest_price:.2f}")
+                        logger.success(f"No price drop for ASIN {asin} with condition '{condition}': remains at {latest_price:.2f}")
                 elif latest_price is not None:
                     logger.info(f"Only one record found for ASIN {asin} with condition '{condition}'")
 
@@ -63,7 +63,7 @@ def analyze():
         to_addr = config["notification_email"]
         from_addr = config["email_sender"]
         send_email(subject, body, to_addr, from_addr)
-        logger.info("Email sent successfully!")
+        logger.success("Email sent successfully!")
 
 if __name__ == "__main__":
     analyze()

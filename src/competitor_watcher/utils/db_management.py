@@ -13,12 +13,12 @@ def attach_db(conn: duckdb.DuckDBPyConnection) -> duckdb.DuckDBPyConnection:
 
     if storage_type == 'POSTGRES':
         conn = setup_postgre(conn)
-        logger.info("Attaching Postgres database to DuckDB")
+        logger.trace("Attaching Postgres database to DuckDB")
         conn.execute("ATTACH '' AS db (TYPE POSTGRES, SECRET postgres_secret_one);")
     
     else:
         # Local DuckDB Storage
-        logger.info("Attaching local database to DuckDB")
+        logger.trace("Attaching local database to DuckDB")
         storage_directory = Path(os.getenv('STORAGE_DIRECTORY')).resolve()
         storage_directory.mkdir(parents=True, exist_ok=True)
         storage_file = storage_directory / "storage.duckdb"

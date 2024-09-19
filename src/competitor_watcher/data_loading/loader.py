@@ -40,7 +40,7 @@ def data_loader():
         load_attribute_data(conn, item_attribute_df_2, item_attribute_schema)
         load_pricing_data(conn, item_pricing_df_2, item_pricing_schema)
     
-    logger.info("Data loaded successfully")
+    logger.trace("Data loaded successfully")
 
 
 
