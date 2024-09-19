@@ -1,65 +1,27 @@
 from datetime import datetime
+import sys
+
 import duckdb
-import polars as pl
 from loguru import logger
+import polars as pl
 import pytz
+
 from competitor_watcher.data_loading.retrieve_competitor_info import main as retrieve_competitor_info
 from competitor_watcher.data_loading.transform_raw_data import unnest_and_explode, transform_pl_df_and_generate_schema
 from competitor_watcher.utils.db_management import attach_db
+from competitor_watcher.utils.db_operations import create_table, insert_data
 
 
 
-
-def load_attribute_data(conn: duckdb.DuckDBPyConnection, item_attribute_df_2: pl.DataFrame, item_attribute_schema: str) -> None:
-    sql_query_create_table_item_attribute = f"""
-    CREATE TABLE IF NOT EXISTS db.item_attribute (
-        {item_attribute_schema}
-    );
-    """
-
-
-    sql_query_insert_data_item_attribute = f"""
-    INSERT INTO db.item_attribute
-    SELECT *
-    FROM item_attribute_df_2 t
-    WHERE NOT EXISTS (
-        SELECT 1
-        FROM db.item_attribute i
-        WHERE i.Identifiers_MarketplaceASIN_ASIN = t.Identifiers_MarketplaceASIN_ASIN
-        AND i.Timestamp = t.Timestamp
-    );
-    """
-
-    conn.execute(sql_query_create_table_item_attribute)
-
-    conn.execute(sql_query_insert_data_item_attribute)
-
-
-def load_pricing_data(conn: duckdb.DuckDBPyConnection, item_pricing_df_2: pl.DataFrame, item_pricing_schema: str) -> None:
+def load_attribute_data(conn: duckdb.DuckDBPyConnection, df: pl.DataFrame, schema: str) -> None:
+    create_table(conn, 'db.item_attribute', schema)
+    insert_data(conn, 'db.item_attribute', df, 'df', ['Identifiers_MarketplaceASIN_ASIN', 'Timestamp'])
     
-    sql_query_cerate_table_item_pricing = f"""
-    CREATE TABLE IF NOT EXISTS db.item_pricing (
-        {item_pricing_schema}
-    );
-    """
 
-    sql_query_insert_data_item_pricing = f"""
-    INSERT INTO db.item_pricing
-    SELECT *
-    FROM item_pricing_df_2 t
-    WHERE NOT EXISTS (
-        SELECT 1
-        FROM db.item_pricing i
-        WHERE i.ASIN = t.ASIN
-        AND i.Timestamp = t.Timestamp
-        AND i.CompetitivePrices_condition = t.CompetitivePrices_condition
-    );
-    """
 
-    conn.execute(sql_query_cerate_table_item_pricing)
-
-    conn.execute(sql_query_insert_data_item_pricing)
-
+def load_pricing_data(conn: duckdb.DuckDBPyConnection, df: pl.DataFrame, schema: str) -> None:
+    create_table(conn, 'db.item_pricing', schema)
+    insert_data(conn, 'db.item_pricing', df, 'df', ['ASIN', 'Timestamp', 'CompetitivePrices_condition'])
 
 
 def data_loader():
@@ -97,5 +59,7 @@ def data_loader():
 
 
 if __name__ == "__main__":
-	data_loader()
+    logger.remove()
+    logger.add(sys.stderr, level="TRACE")
+    data_loader()
 	
