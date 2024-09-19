@@ -11,7 +11,7 @@ def analyze():
     
     config = load_config()
 
-    asin_list = config["competitor_asin_list"]
+    asin_list = set(asin for sublist in config['competitor_asin_dict'].values() for asin in sublist)
 
     dropped_messages = []
 

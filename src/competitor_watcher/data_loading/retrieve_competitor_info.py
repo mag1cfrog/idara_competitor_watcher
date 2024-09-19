@@ -84,7 +84,7 @@ def main():
     
     config = load_config()
 
-    asin_list = config['competitor_asin_list']
+    asin_list = set(asin for sublist in config['competitor_asin_dict'].values() for asin in sublist)
 
     competitor_item_attribute, competitor_item_pricing = get_competitor_info(asin_list, credentials)
 

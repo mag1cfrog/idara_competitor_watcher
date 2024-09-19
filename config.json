@@ -1,9 +1,18 @@
 {
-    "competitor_asin_list": [
-        "B0CZDH9RZC", 
-        "B0CX9LNHQC", 
-        "B07MP1JB2Z"
-    ],
+    "competitor_asin_dict": 
+        {
+            "B08KD5N3MM": [
+                "B0CZDH9RZC", 
+                "B0CX9LNHQC", 
+                "B07MP1JB2Z"
+                ],
+            "B0CHDCYYZP": [
+                "B0CZDH9RZC", 
+                "B0CX9LNHQC", 
+                "B07MP1JB2Z"
+                ]
+        }
+    ,
     "notification_email": "harrywong2017@gmail.com",
     "email_sender": "harrywong2017@gmail.com"
 }
