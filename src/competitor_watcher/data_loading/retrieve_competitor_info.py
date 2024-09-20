@@ -83,7 +83,6 @@ def retrieve_competitor_info(credentials: dict):
 
     item_attribute_df_2, item_attribute_schema = transform_pl_df_and_generate_schema(item_attribute_df)
     item_pricing_df_2, item_pricing_schema = transform_pl_df_and_generate_schema(item_pricing_df)
-    print(item_attribute_df_2.schema, item_attribute_schema)
 
     return (
         (item_attribute_df_2, item_attribute_schema),
