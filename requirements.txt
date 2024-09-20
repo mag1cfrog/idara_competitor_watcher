@@ -1,4 +1,0 @@
-python-dotenv
-polars
-duckdb
-pyarrow
