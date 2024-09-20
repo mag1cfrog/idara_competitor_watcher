@@ -141,6 +141,20 @@ To start using the Competitor Watcher, follow these steps after installation:
 Use these instructions to get the most out of Competitor Watcher, keeping your competitive analysis sharp and timely.
 
 
+
+## Docker Deployment
+
+For an easy and reliable setup using Docker, we have prepared a separate repository that includes everything needed to deploy Competitor Watcher as a Cron job inside a Docker container. This approach simplifies deployment, ensuring that Competitor Watcher runs automatically at scheduled intervals without requiring manual execution.
+
+### Quick Setup with Docker
+
+To deploy Competitor Watcher using Docker, please visit the following repository for detailed instructions and all necessary files:
+
+- [Deploy Competitor Watcher Docker Repository](https://github.com/mag1cfrog/deploy_competitor_watcher)
+
+This repository contains a step-by-step guide to building and running Competitor Watcher in a Docker environment, tailored for those who prefer containerized applications for ease of maintenance and scalability.
+
+
 ## Contributing
 
 1. Fork the repository.
