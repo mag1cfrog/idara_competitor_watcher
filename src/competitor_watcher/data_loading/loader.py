@@ -38,7 +38,7 @@ def data_loader():
 
     with duckdb.connect() as conn:
         conn = attach_db(conn)
-
+        print(item_attribute_schema)
         load_attribute_data(conn, item_attribute_df_2, item_attribute_schema)
         load_pricing_data(conn, item_pricing_df_2, item_pricing_schema)
     

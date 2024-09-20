@@ -1,11 +1,16 @@
 import os
 from datetime import datetime
-from loguru import logger
+
 from dotenv import load_dotenv
+from loguru import logger
+import polars as pl
+
 from sp_api.api import Catalog
 from sp_api.api import Products
 from sp_api.base import Marketplaces
+from competitor_watcher.data_loading.transform_raw_data import unnest_and_explode, transform_pl_df_and_generate_schema
 from competitor_watcher.utils.config_loader import load_config
+
 
 
 
@@ -67,7 +72,23 @@ def retrieve_competitor_info(credentials: dict):
 
     competitor_item_attribute, competitor_item_pricing = get_competitor_info(asin_list, credentials)
 
-    return competitor_item_attribute, competitor_item_pricing
+
+    item_attribute_df = unnest_and_explode(
+        pl.DataFrame(competitor_item_attribute)
+    )
+
+    item_pricing_df = unnest_and_explode(
+        pl.DataFrame(competitor_item_pricing).unnest('Product').unnest('CompetitivePricing')
+    )
+
+    item_attribute_df_2, item_attribute_schema = transform_pl_df_and_generate_schema(item_attribute_df)
+    item_pricing_df_2, item_pricing_schema = transform_pl_df_and_generate_schema(item_pricing_df)
+    print(item_attribute_df_2.schema, item_attribute_schema)
+
+    return (
+        (item_attribute_df_2, item_attribute_schema),
+        (item_pricing_df_2, item_pricing_schema)
+    )
 
 
     

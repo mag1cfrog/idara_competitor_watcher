@@ -6,7 +6,7 @@ from competitor_watcher.data_loading import data_loader
 from competitor_watcher.data_analysis import analyze
 
 
-@logger.catch
+# @logger.catch(onerror=lambda _: sys.exit(1), reraise=True)
 def main():
     try:
         data_loader()
