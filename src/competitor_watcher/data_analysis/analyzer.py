@@ -1,7 +1,7 @@
 import json
 import duckdb
 from loguru import logger
-from competitor_watcher.utils.db_management import attach_db
+from competitor_watcher.storage.db_management import attach_db
 from competitor_watcher.utils.email_sender import send_email
 from competitor_watcher.utils.config_loader import load_config
 

@@ -5,8 +5,8 @@ from loguru import logger
 import polars as pl
 
 from competitor_watcher.data_loading.data_preparation import prepare_data
-from competitor_watcher.utils.db_management import attach_db
-from competitor_watcher.utils.db_operations import create_table, insert_data
+from competitor_watcher.storage.db_management import attach_db
+from competitor_watcher.storage.db_operations import create_table, insert_data
 from competitor_watcher.utils.time_utils import get_current_timestamp
 
 
