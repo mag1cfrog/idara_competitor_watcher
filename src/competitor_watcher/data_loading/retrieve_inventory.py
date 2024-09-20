@@ -8,7 +8,7 @@ from competitor_watcher.data_loading.transform_raw_data import transform_pl_df_a
 from competitor_watcher.utils import config_loader
 
 
-def get_inventory(credentials: dict):
+def retrieve_inventory(credentials: dict):
     load_dotenv()
     os.environ['ENV_DISABLE_DONATION_MSG'] = '1'
 
