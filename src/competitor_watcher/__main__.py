@@ -1,6 +1,10 @@
+import sys
+
+from loguru import logger
+
 from competitor_watcher.data_loading import data_loader
 from competitor_watcher.data_analysis import analyze
-from loguru import logger
+
 
 @logger.catch
 def main():
@@ -13,5 +17,7 @@ def main():
 
 
 if __name__ == "__main__":
+    logger.remove()
+    logger.add(sys.stderr, level="TRACE")
     main()
 
