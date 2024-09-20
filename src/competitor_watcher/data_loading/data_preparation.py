@@ -27,11 +27,13 @@ def prepare_data(timestamp):
 
     item_pricing_schema += ",\nTimestamp TIMESTAMP WITH TIME ZONE"
 
-    # inventory_df, inventory_schema = retrieve_inventory(credentials)
+    inventory_df, inventory_schema = retrieve_inventory(credentials)
 
-    # inventory_df_2 = inventory_df.with_columns(
-    #     pl.lit(timestamp).str.to_datetime().alias('Timestamp')
-    # )
+    inventory_df = inventory_df.with_columns(
+        pl.lit(timestamp).str.to_datetime().alias('Timestamp')
+    )
+
+    inventory_schema += ",\nTimestamp TIMESTAMP WITH TIME ZONE"
 
 
 
@@ -39,5 +41,6 @@ def prepare_data(timestamp):
     return (
             (item_attribute_df, item_attribute_schema), 
             (item_pricing_df, item_pricing_schema),
+            (inventory_df, inventory_schema)
 
         ) 

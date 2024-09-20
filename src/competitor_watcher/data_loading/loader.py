@@ -31,8 +31,11 @@ def data_loader():
     timestamp = get_current_timestamp()
 
     
-    ((item_attribute_df_2, item_attribute_schema),
-     (item_pricing_df_2, item_pricing_schema)) = prepare_data(timestamp)
+    (
+        (item_attribute_df_2, item_attribute_schema),
+        (item_pricing_df_2, item_pricing_schema),
+        (inventory_df_2, inventory_schema)
+     ) = prepare_data(timestamp)
 
 
 
@@ -40,6 +43,7 @@ def data_loader():
         conn = attach_db(conn)
         load_attribute_data(conn, item_attribute_df_2, item_attribute_schema)
         load_pricing_data(conn, item_pricing_df_2, item_pricing_schema)
+        load_inventory_data(conn, inventory_df_2, inventory_schema)
     
     logger.trace("Data loaded successfully")
 

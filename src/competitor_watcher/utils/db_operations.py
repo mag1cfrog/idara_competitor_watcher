@@ -27,6 +27,6 @@ def insert_data(conn: duckdb.DuckDBPyConnection, table_name: str, df: pl.DataFra
         WHERE {unique_conditions}
     );
     """
-    logger.trace("Inserting data into db.item_attribute")
+    logger.trace(f"Inserting data into {table_name}")
     conn.execute(sql_query)
     logger.trace("Data inserted successfully")
