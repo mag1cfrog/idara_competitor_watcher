@@ -132,3 +132,5 @@ notebook/
 
 # Data folder
 data/
+
+.vscode/
